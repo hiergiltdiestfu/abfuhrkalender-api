@@ -94,7 +94,7 @@
 						</tr>
 						<tr>
 							<td colspan="2">
-								<a class="orange" target="_blank" href="kalender.ashx?STANDORT=103449&amp;DUMMY=636442198784853119">Abfuhrkalender f�r 3 Monate aufrufen&nbsp;(*.pdf, ca. 100 KB)</a>
+								<a class="orange" target="_blank" href="kalender.ashx?STANDORT=xxxx&amp;DUMMY=xxxxx">Abfuhrkalender f�r 3 Monate aufrufen&nbsp;(*.pdf, ca. 100 KB)</a>
 							</td>
 						</tr>
 						<tr>
