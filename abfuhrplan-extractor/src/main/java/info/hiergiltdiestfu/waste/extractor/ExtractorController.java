@@ -44,7 +44,7 @@ public class ExtractorController {
 		
 		rawResult.forEach((type, data) -> {
 			try {
-				result.getNextRunPerDisposalType().add(new DisposalRun(type, data.first(), data.second()));
+				result.getNextRunPerDisposalType().add(DisposalRunAdapter.build(type, data.first(), data.second()));
 			} catch (Throwable e) {
 				throw new RuntimeException(e);
 			}
