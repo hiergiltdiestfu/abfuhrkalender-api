@@ -9,8 +9,6 @@ import java.util.Map;
 import javax.ws.rs.QueryParam;
 
 import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -64,9 +62,6 @@ public class ExtractorController {
 		
 		return result;
 	}
-	
-	final HttpClientBuilder ClientBuilder = HttpClientBuilder.create();
-	final HttpClient client = ClientBuilder.build();
 	
 	private Map<String, Pair<String, String>> getRawDisposalRunsFromStadtreinigung(String street, String number) throws ClientProtocolException, IOException {
 		final Map<String, Pair<String, String>> result = new HashMap<>(8, 0.75f);
