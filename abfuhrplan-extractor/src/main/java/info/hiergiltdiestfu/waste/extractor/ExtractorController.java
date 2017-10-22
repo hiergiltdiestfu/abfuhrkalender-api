@@ -8,7 +8,6 @@ import java.util.Map;
 
 import javax.ws.rs.QueryParam;
 
-import org.apache.http.client.ClientProtocolException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -63,7 +62,7 @@ public class ExtractorController {
 		return result;
 	}
 	
-	private Map<String, Pair<String, String>> getRawDisposalRunsFromStadtreinigung(String street, String number) throws ClientProtocolException, IOException {
+	private Map<String, Pair<String, String>> getRawDisposalRunsFromStadtreinigung(String street, String number) throws IOException {
 		final Map<String, Pair<String, String>> result = new HashMap<>(8, 0.75f);
 		final String targetURI = String.format(SR_API_HEAD_URI_WITH_PARAMS, URLEncoder.encode(street, "UTF-8"), URLEncoder.encode(number, "UTF-8"));
 		
