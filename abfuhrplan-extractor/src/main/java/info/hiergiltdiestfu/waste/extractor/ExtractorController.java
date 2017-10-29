@@ -34,6 +34,7 @@ public class ExtractorController {
 	public Health health() {
 		return new Health(100, "Looking good");
 		//TODO test availability of SR API and report on that
+		//TODO change context path to /health for eureka compat
 	}
 	
 	@ResponseBody
@@ -50,15 +51,6 @@ public class ExtractorController {
 			}
 		});
 		
-		{ 
-			DisposalRun run = new DisposalRun();
-			
-			run.setRunTime(new Date());
-			run.setType(WasteType.TEST);
-			
-			result.getNextRunPerDisposalType().add(run);
-		}
-		
 		return result;
 	}
 	
@@ -71,7 +63,7 @@ public class ExtractorController {
 
 //		System.out.println(detailsTable.text());
 		
-		if (detailsTable.size() % 3 != 0) throw new IllegalStateException("Size of select from SR API is not a multiple of 3! This is supicious - check your Selector!");
+		if (detailsTable.size() % 3 != 0) throw new IllegalStateException("Size of select from SR API is not a multiple of 3! This is suspicious - check your Selector!");
 
 		int step = 0;
 		String wasteType = null, interval = null, nextRun = null;
