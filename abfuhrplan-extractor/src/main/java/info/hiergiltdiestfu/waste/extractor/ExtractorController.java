@@ -26,8 +26,9 @@ import info.hiergiltdiestfu.waste.extractor.model.WasteType;
 @Controller
 public class ExtractorController {
 
+	private final Map<String, Pair<Long, NextDisposalRuns>> CACHE = new HashMap<>();	
 	
-	
+	private static final long MAX_CACHE_AGE_MILLIS = 1000*60*60;
 	private static final String SR_API_HEAD_URI_WITH_PARAMS = "http://stadtplan.dresden.de/project/cardo3Apps/IDU_DDStadtplan/abfall/detailpage.aspx?POS-ADR=%s|%s";
 	@ResponseBody
 	@RequestMapping(path="/health-description")
@@ -40,6 +41,12 @@ public class ExtractorController {
 	@ResponseBody
 	@RequestMapping(path="/next-disposal")
 	public NextDisposalRuns nextDisposal(@QueryParam("street") String street, @QueryParam("number") String number) throws Throwable {
+		if (CACHE.containsKey(street+number)) {
+			final Pair<Long, NextDisposalRuns> cached = CACHE.get(street+number);
+			if (System.currentTimeMillis()-cached.first() > MAX_CACHE_AGE_MILLIS) { CACHE.remove(street+number); }
+			else return cached.second();
+		}
+	
 		final NextDisposalRuns result = new NextDisposalRuns(String.format("%s %s", street, number));
 		final Map<String, Pair<String, String>> rawResult = getRawDisposalRunsFromStadtreinigung(street, number);
 		
@@ -51,6 +58,8 @@ public class ExtractorController {
 			}
 		});
 		
+		CACHE.put(street+number, new Pair<Long, NextDisposalRuns>(System.currentTimeMillis(), result));
+
 		return result;
 	}
 	
