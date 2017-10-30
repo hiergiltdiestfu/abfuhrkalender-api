@@ -28,7 +28,7 @@ public class ExtractorController {
 	private final Map<String, Pair<Long, NextDisposalRuns>> CACHE = new HashMap<>(MAX_CACHE_ENTRIES / 4);	
 	
 	private static final long MAX_CACHE_AGE_MILLIS = 1000*60*60;
-	private static final int MAX_CACHE_ENTRIES = 2*4;//64*4;
+	private static final int MAX_CACHE_ENTRIES = 64*4;
 	private static final String SR_API_HEAD_URI_WITH_PARAMS = "http://stadtplan.dresden.de/project/cardo3Apps/IDU_DDStadtplan/abfall/detailpage.aspx?POS-ADR=%s|%s";
 	@ResponseBody
 	@RequestMapping(path="/health-description")
@@ -61,8 +61,13 @@ public class ExtractorController {
 
 		if (CACHE.containsKey(street+number)) {
 			final Pair<Long, NextDisposalRuns> cached = CACHE.get(street+number);
-			if (System.currentTimeMillis()-cached.first() > MAX_CACHE_AGE_MILLIS) { CACHE.remove(street+number); }
-			else return cached.second();
+			if (System.currentTimeMillis()-cached.first() > MAX_CACHE_AGE_MILLIS) { 
+				System.out.println("CACHE: Hit, but too old :(");
+				CACHE.remove(street+number); 
+			} else { 
+				System.out.println("CACHE: Hit! :)");
+				return cached.second();
+			}
 		}
 	
 		final NextDisposalRuns result = new NextDisposalRuns(String.format("%s %s", street, number));
