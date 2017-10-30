@@ -2,9 +2,8 @@ package info.hiergiltdiestfu.waste.extractor;
 
 import java.io.IOException;
 import java.net.URLEncoder;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.*;
 
 import javax.ws.rs.QueryParam;
 
@@ -26,9 +25,10 @@ import info.hiergiltdiestfu.waste.extractor.model.WasteType;
 @Controller
 public class ExtractorController {
 
-	private final Map<String, Pair<Long, NextDisposalRuns>> CACHE = new HashMap<>();	
+	private final Map<String, Pair<Long, NextDisposalRuns>> CACHE = new HashMap<>(MAX_CACHE_ENTRIES / 4);	
 	
 	private static final long MAX_CACHE_AGE_MILLIS = 1000*60*60;
+	private static final int MAX_CACHE_ENTRIES = 2*4;//64*4;
 	private static final String SR_API_HEAD_URI_WITH_PARAMS = "http://stadtplan.dresden.de/project/cardo3Apps/IDU_DDStadtplan/abfall/detailpage.aspx?POS-ADR=%s|%s";
 	@ResponseBody
 	@RequestMapping(path="/health-description")
@@ -41,6 +41,24 @@ public class ExtractorController {
 	@ResponseBody
 	@RequestMapping(path="/next-disposal")
 	public NextDisposalRuns nextDisposal(@QueryParam("street") String street, @QueryParam("number") String number) throws Throwable {
+		if (CACHE.size()>=MAX_CACHE_ENTRIES) {
+
+			System.err.println("CACHE: Expunging entries that are too old");
+			Collection<Pair<Long, NextDisposalRuns>> values = CACHE.values();
+			List<Pair<Long, ?>> tooOld = values.stream().filter(p->p.first()<=System.currentTimeMillis()-MAX_CACHE_AGE_MILLIS).collect(Collectors.toList());
+			values.removeAll(tooOld);
+			System.err.println(String.format("CACHE: That freed up %d entries", tooOld.size()));
+
+			if (CACHE.size()>=MAX_CACHE_ENTRIES) {
+				System.err.println("CACHE: But that wasn't enough. Now I'm gonna choose at random, sorry.");
+				values = CACHE.values();
+				List<?> random = values.stream().filter(p->Math.random()>0.75f).collect(Collectors.toList());
+				values.removeAll(random);
+				System.err.println(String.format("CACHE: That freed up %d entries", random.size()));
+			}
+
+		}
+
 		if (CACHE.containsKey(street+number)) {
 			final Pair<Long, NextDisposalRuns> cached = CACHE.get(street+number);
 			if (System.currentTimeMillis()-cached.first() > MAX_CACHE_AGE_MILLIS) { CACHE.remove(street+number); }
