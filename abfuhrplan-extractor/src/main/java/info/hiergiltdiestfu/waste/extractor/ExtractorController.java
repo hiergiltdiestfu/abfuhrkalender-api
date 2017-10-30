@@ -22,6 +22,15 @@ import info.hiergiltdiestfu.waste.extractor.model.Health;
 import info.hiergiltdiestfu.waste.extractor.model.NextDisposalRuns;
 import info.hiergiltdiestfu.waste.extractor.model.WasteType;
 
+/**
+* This is a microservice for extracting waste disposal run data from Stadtreinigung Dresden,
+* and delivering it via REST. Data is cached for {@link MAX_CACHE_AGE_MILLIS} ms.
+* 
+* TODO proper logging
+* TODO specialize extractor via Strategy, produce extractors for other cities
+* TODO discovery for city specialisations via eureka
+* @author niob@hiergiltdiestfu.info
+*/
 @Controller
 public class ExtractorController {
 
